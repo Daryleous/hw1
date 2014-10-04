@@ -1,0 +1,110 @@
+Lecture Notes-- rails
+
+CRUD 
+-refers to all the major functions that are implemented in relational database applications: create, read, update, destroy.
+
+First thing to do to create a model: run generate rails generate model book title.string description.text
+
+When we generate, the files haven't been migrated yet, so the model still isn't online.
+So we use rake:db migrate and it adds our newly generated info to a database
+
+BUT we haven't created any views yet!!
+
+So to create "books", we first need a form to create users. 
+This form, once submitted needs to create a 'row' in the database, like we did with the migration stuffs. 
+
+First: specify a route, using a get request:
+in routes.rb
+
+get '/books/new', to:'books#new'
+
+Then we need a controller so rails generate new controller
+Create a new view (html file)
+Add a method to the controller.
+
+(HTTP- way of transferring info between client and server)
+
+Creating the form for our users to use: ruby code.  
+
+<h1> Where our form is to create books </h1>
+<%= form_for Book.bew, url:{action: 'create'} do |f| %>
+	Title: <%= f.text_field :title %>
+	Description: <%= f.text_area :description %>
+	<%= f.submit "Create" %>
+<%= end %>
+
+But wait! We need to specify what create is.
+
+back in routes.db we need to add:
+
+post '/books', to: 'books#create'
+
+Now we have no template upon which to submit the forms!!
+so we create another html file that says create.html.erb and then we have to add a new create method inside of the BooksController class. 
+
+def create
+	@book = Book.new(params[:book])
+	@book.save
+
+WE NEED TO FILTER PARAMETERS:
+
+so under book controllers again
+private
+
+slsfhasldk
+
+aslkd
+
+anything under private is private!
+
+So:
+private
+
+def book_params
+	params.require(:book).permit(:title, :description)
+				 #these are the parameters users are allowed to change (keeps people from gaining admin capabilities)
+
+
+Now we want to show things so in books controller again (above private!)
+We define a
+ def show
+ 	@book = Book.find(params[:id])
+ end 
+ function
+ In routes.db
+ we add get '/books/:id', to: 'books#show'
+
+ But we need some code here to re-direct us to the show action 
+ Prefixes 
+
+ Search restful routes 
+
+
+Now we move on to the UPDATE part:
+(post creates a new thing, patch adds to already existing, put replaces)
+
+To routes add:
+get '/books/:id/edit', to: 'books#edit', as:'book' #added a prefix 
+patch '/books/:id', to 'books#update'
+
+Now we need to specify an update function in the controllers and then create an html file for the views. 
+
+
+Our show view
+Title: <%= @book.title %>
+Description:
+
+Now we must DESTROY....then we will know all that is CRUD
+in routes:
+delete '/books/:id', to:'books#destroy'
+
+Now we create a destroy function in the BooksController 
+def destry
+	@book = Book.find(params[:id])
+	@book.destroy
+	redirect_to books_new_path (or something like that didn't quite catch all of it)
+
+
+Instead of specifying all of the routes, we can also just use resources :books and ruby will create all of the paths for us-- crazy! 
+
+Side note: model names are singular, controller names are plural
